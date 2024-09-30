@@ -2,11 +2,10 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 app.use(express.json());
-
 const { MGDB_USERNAME, MGDB_PASSWORD, MGDB_IP, MGDB_PORT } = require("./config/config");
 
 app.get("/", (req, res) => {
-    res.send("Xin chào mọi người");
+    res.send("Xin chào mọi người <3");
 });
 
 const connectWithRetry = () => {
