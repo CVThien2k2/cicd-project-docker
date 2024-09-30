@@ -1,0 +1,47 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Docker Login
+      uses: docker/login-action@v3.3.0
+      with:
+        username: ${{secrets.DOCKERHUB_USENAME}}
+        password: ${{secrets.DOCKERHUB_TOKEN}}
+    - name: Build 
+      run: |
+          docker build -t caothien2k2/app-nodejs .
+    - name: Push image to Docker Hub
+      uses: docker/build-push-action@v6.9.0
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-nodejs:${{ github.sha }}
+  deploy:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to server
+       # Sử dụng action "appleboy/ssh-action" để triển khai image lên server thông qua SSH
+        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          first_ssh: |
+            cd /home/ubuntu/workspace/nodejs-app
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/app-nodejs:${{ github.sha }}
+            docker compose -f compose.yaml -f compose.prod.yaml up -d 
+            
+
+        
