@@ -25,7 +25,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-nodejs:${{ github.sha }}
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/app-nodejs
   deploy:
     needs: build_and_test
     runs-on: ubuntu-latest
@@ -40,7 +40,7 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           first_ssh: |
             cd /home/ubuntu/workspace/nodejs-app
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/app-nodejs:${{ github.sha }}
+            docker compose pull app
             docker compose -f compose.yaml -f compose.prod.yaml up -d 
             
 
