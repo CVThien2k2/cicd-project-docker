@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const { MGDB_USERNAME, MGDB_PASSWORD, MGDB_IP, MGDB_PORT } = require("./config/config");
 
 app.get("/", (req, res) => {
-    res.send("Hello World!!!");
+    res.send("Xin chào mọi người");
 });
 
 const connectWithRetry = () => {
